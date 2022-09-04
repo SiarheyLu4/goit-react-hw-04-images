@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 import { Modal } from "../Modal/Modal";
@@ -10,30 +10,38 @@ import { Button } from "components/Button/Button";
 const URL = "https://pixabay.com/api/";
 const KEY = "28282273-de260e28427aa1fd2a8294f86"
 
-export class ImageFinder extends Component {
+export function ImageFinder() {
+  const [query, setQuery] = useState('');
+  const [images, setImages] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [status, setStatus] = useState('idle');
+  const [showModal, setShowModal] = useState(false);
+  const [largeImageURL, setLargeImageURL] = useState(null);
+  const [tags, setTags] = useState(null);
 
-  state = {
-    query: '',
-    images: [],
-    page: 1,
-    loading: false,
-    error: null,
-    status: 'idle',
-    showModal: false,
-    largeImageURL: null,
-    tags: null,
+  const loadMore = () => {
+    setPage(prevPage => prevPage + 1)
+  };
+
+  const handleFormSubmit = (query) => {
+    setQuery(query);
+    setImages([]);
+    setPage(1);
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { query, page} = this.state;
+  const toggleModal = (largeImageURL, tags) => {
+    setShowModal(!showModal);
+    setLargeImageURL(largeImageURL);
+    setTags(tags);
+  }
 
-    if (prevState.query !== query ||
-      prevState.page !== page) {
-      this.setState({
-        loading: true
-      });
+  useEffect(() => {
+    if (!query) return;
+      setLoading(true)
 
-      // setTimeout(() => {
+      setTimeout(() => {
         fetch(`${URL}?key=${KEY}&q=${query}&page=${page}&image_type=photo&orientation=horizontal&per_page=12`)
           .then(response => {
             if (response.ok) {
@@ -45,78 +53,49 @@ export class ImageFinder extends Component {
           })
           .then(result => {
             if (result.total === 0) {
-              return this.setState({ status: 'rejected', images: [], loading: false });
+              setStatus('rejected');
+              setImages([]);
+              setLoading(false);
+              return;
             }
-            this.setState(prevState => {
-            return {
-              images: [...prevState.images, ...result.hits],
-              status: 'resolved',
-              loading: false
-            };
-          });
+            setImages(prevImages => [...prevImages, ...result.hits]);
+            setStatus('resolved');
+            setLoading(false);
           })
-          .catch(error => this.setState({ error, status: 'rejected'}))
-      // }, 1000);
-    }
-  };
-  
-  loadMore = () => {
-    this.setState(prevState => {
-      return { page: prevState.page + 1 }
-    });
-  };
+          .catch(error => {
+            setError(error);
+            setStatus('rejected');
+          })
+      }, 1000);
+  }, [query, page]) 
 
-  handleFormSubmit = (query) => {
-    this.setState({query, images: [], page: 1})
-  }
-
-  toggleModal = (largeImageURL, tags) => {
-    this.setState(({ showModal }) => ({
-      showModal: !showModal,
-    }));
-    this.setState({largeImageURL: largeImageURL, tags: tags})
-  }
-
-  render() {
-    const { images,
-      status,
-      loading,
-      showModal,
-      largeImageURL,
-      tags
-    } = this.state;
-
-    const { handleFormSubmit, toggleModal, loadMore} = this;
-
-    return (
+  return (
+    <Card>
       
-      <Card>
-        
-        <Searchbar onSubmit={handleFormSubmit} />
+      <Searchbar onSubmit={handleFormSubmit} />
 
-        {status === 'idle' && <h2>Enter keyword</h2>}
+      {status === 'idle' && <h2>Enter keyword</h2>}
 
-        {loading && <Loader />}
+      {loading && <Loader />}
 
-        {status === 'rejected' && <h2>Image not found!</h2>}
+      {status === 'rejected' && <h2>Image not found!</h2>}
 
-        {status === 'resolved' && (<>
-          <ImageGallery
-            images={images}
-            modal={toggleModal}
-          />
-          <Button onClick={loadMore}/>
-        </>)}
+      {status === 'resolved' && (<>
+        <ImageGallery
+          images={images}
+          modal={toggleModal}
+        />
+        <Button onClick={loadMore}/>
+      </>)}
 
-        {showModal && <Modal
-          onClose={toggleModal}
-          bigImg={largeImageURL}
-          tags={tags}
-        />}
+      {showModal && <Modal
+        onClose={toggleModal}
+        bigImg={largeImageURL}
+        tags={tags}
+      />}
 
-      </Card>
-    );
-  }
+    </Card>
+  );
 }
 
 const Card = styled.div`
@@ -125,3 +104,126 @@ const Card = styled.div`
   grid-gap: 16px;
   padding-bottom: 24px;
 `
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// export class OldImageFinder extends Component {
+
+//   state = {
+//     query: '',
+//     images: [],
+//     page: 1,
+//     loading: false,
+//     error: null,
+//     status: 'idle',
+//     showModal: false,
+//     largeImageURL: null,
+//     tags: null,
+//   }
+
+//   componentDidUpdate(prevProps, prevState) {
+//     const { query, page} = this.state;
+
+//     if (prevState.query !== query ||
+//       prevState.page !== page) {
+//       // this.setState({
+//       //   loading: true
+//       // });
+
+//       // setTimeout(() => {
+//         fetch(`${URL}?key=${KEY}&q=${query}&page=${page}&image_type=photo&orientation=horizontal&per_page=12`)
+//           .then(response => {
+//             if (response.ok) {
+//               return response.json();
+//             }
+//             return Promise.reject(
+//               new Error('Image not found!!!')
+//             );
+//           })
+//           .then(result => {
+//             if (result.total === 0) {
+//               return this.setState({ status: 'rejected', images: [], loading: false });
+//             }
+//             this.setState(prevState => {
+//             return {
+//               images: [...prevState.images, ...result.hits],
+//               status: 'resolved',
+//               loading: false
+//             };
+//           });
+//           })
+//           .catch(error => this.setState({ error, status: 'rejected'}))
+//       // }, 1000);
+//     }
+//   };
+  
+//   // loadMore = () => {
+//   //   this.setState(prevState => {
+//   //     return { page: prevState.page + 1 }
+//   //   });
+//   // };
+
+//   // handleFormSubmit = (query) => {
+//   //   this.setState({query, images: [], page: 1})
+//   // }
+
+//   // toggleModal = (largeImageURL, tags) => {
+//   //   this.setState(({ showModal }) => ({
+//   //     showModal: !showModal,
+//   //   }));
+//   //   this.setState({largeImageURL: largeImageURL, tags: tags})
+//   // }
+
+//   render() {
+//     const { images,
+//       status,
+//       loading,
+//       showModal,
+//       largeImageURL,
+//       tags
+//     } = this.state;
+
+//     const { handleFormSubmit, toggleModal, loadMore} = this;
+
+//     return (
+      
+//       <Card>
+        
+//         <Searchbar onSubmit={handleFormSubmit} />
+
+//         {status === 'idle' && <h2>Enter keyword</h2>}
+
+//         {loading && <Loader />}
+
+//         {status === 'rejected' && <h2>Image not found!</h2>}
+
+//         {status === 'resolved' && (<>
+//           <ImageGallery
+//             images={images}
+//             modal={toggleModal}
+//           />
+//           <Button onClick={loadMore}/>
+//         </>)}
+
+//         {showModal && <Modal
+//           onClose={toggleModal}
+//           bigImg={largeImageURL}
+//           tags={tags}
+//         />}
+
+//       </Card>
+//     );
+//   }
+// }
+
