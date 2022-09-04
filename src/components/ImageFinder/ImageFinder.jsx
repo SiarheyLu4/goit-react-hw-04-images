@@ -15,7 +15,6 @@ export function ImageFinder() {
   const [images, setImages] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [status, setStatus] = useState('idle');
   const [showModal, setShowModal] = useState(false);
   const [largeImageURL, setLargeImageURL] = useState(null);
@@ -63,7 +62,6 @@ export function ImageFinder() {
             setLoading(false);
           })
           .catch(error => {
-            setError(error);
             setStatus('rejected');
           })
       }, 1000);
