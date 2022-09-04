@@ -8,7 +8,6 @@ export function Searchbar({onSubmit}) {
 
   const handleChange = (e) => {
     setQuery(e.currentTarget.value.toLowerCase());
-    // console.log(e.target.value);
   }
 
   const handleSubmit = (e) => { 
@@ -20,7 +19,6 @@ export function Searchbar({onSubmit}) {
 
     onSubmit(query);
     setQuery('');
-    // console.log(this.state.query);
   };
 
   return (
@@ -43,65 +41,6 @@ export function Searchbar({onSubmit}) {
     </Header>
   )
 }
-
-
-
-
-
-
-
-
-
-
-// export class OldSearchbar extends Component {
-
-//   // state = {
-//   //   query: '',
-//   // };
-
-//   // handleChange = (e) => {
-//   //   this.setState({ query: e.currentTarget.value.toLowerCase()});
-//   //   // console.log(e.target.value);
-//   // }
-
-//   handleSubmit = (e) => { 
-//     const { query } = this.state;
-//     e.preventDefault();
-
-//     if (query.trim() === '') {
-//       return Notify.warning('Enter a query', { position: "center-top"});
-//     }
-
-//     this.props.onSubmit(query);
-//     this.setState({ query: ''});
-//     // console.log(this.state.query);
-//   };
-
-//   render() {
-//     const { query } = this.state;
-//     const { handleSubmit, handleChange} = this;
-
-//     return (
-//         <Header>
-//           <SearchForm onSubmit={handleSubmit}>
-//             <SearchFormBtm type="submit">
-//               <SearchFormBtmLabel>Search</SearchFormBtmLabel>
-//             </SearchFormBtm>
-
-//             <SearchFormInput
-//               type="text"
-//               autoComplete="off"
-//               autoFocus
-//               placeholder="Search images and photos"
-//               name="query"
-//               onChange={handleChange}
-//               value={query}
-//             />
-//           </SearchForm>
-//         </Header>
-//     )
-//   }
-// }
 
 Searchbar.propTypes = {
   onSubmit: PropTypes.func.isRequired
@@ -178,3 +117,63 @@ const SearchFormInput = styled.input`
     font-size: 18px;
     }
 `
+
+
+
+
+
+
+
+
+
+
+// export class OldSearchbar extends Component {
+
+//   // state = {
+//   //   query: '',
+//   // };
+
+//   // handleChange = (e) => {
+//   //   this.setState({ query: e.currentTarget.value.toLowerCase()});
+//   //   // console.log(e.target.value);
+//   // }
+
+//   handleSubmit = (e) => { 
+//     const { query } = this.state;
+//     e.preventDefault();
+
+//     if (query.trim() === '') {
+//       return Notify.warning('Enter a query', { position: "center-top"});
+//     }
+
+//     this.props.onSubmit(query);
+//     this.setState({ query: ''});
+//     // console.log(this.state.query);
+//   };
+
+//   render() {
+//     const { query } = this.state;
+//     const { handleSubmit, handleChange} = this;
+
+//     return (
+//         <Header>
+//           <SearchForm onSubmit={handleSubmit}>
+//             <SearchFormBtm type="submit">
+//               <SearchFormBtmLabel>Search</SearchFormBtmLabel>
+//             </SearchFormBtm>
+
+//             <SearchFormInput
+//               type="text"
+//               autoComplete="off"
+//               autoFocus
+//               placeholder="Search images and photos"
+//               name="query"
+//               onChange={handleChange}
+//               value={query}
+//             />
+//           </SearchForm>
+//         </Header>
+//     )
+//   }
+// }
+
