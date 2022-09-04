@@ -40,7 +40,7 @@ export function ImageFinder() {
     if (!query) return;
       setLoading(true)
 
-      setTimeout(() => {
+      // setTimeout(() => {
         fetch(`${URL}?key=${KEY}&q=${query}&page=${page}&image_type=photo&orientation=horizontal&per_page=12`)
           .then(response => {
             if (response.ok) {
@@ -64,7 +64,7 @@ export function ImageFinder() {
           .catch(error => {
             setStatus('rejected');
           })
-      }, 1000);
+      // }, 1000);
   }, [query, page]) 
 
   return (
