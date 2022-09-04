@@ -1,57 +1,107 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import PropTypes from 'prop-types';
 import { Notify } from 'notiflix';
 
-export class Searchbar extends Component {
+export function Searchbar({onSubmit}) {
+  const [query, setQuery] = useState('');
 
-  state = {
-    query: '',
-  };
-
-  handleChange = (e) => {
-    this.setState({ query: e.currentTarget.value.toLowerCase()});
+  const handleChange = (e) => {
+    setQuery(e.currentTarget.value.toLowerCase());
     // console.log(e.target.value);
   }
 
-  handleSubmit = (e) => { 
-    const { query } = this.state;
+  const handleSubmit = (e) => { 
     e.preventDefault();
 
     if (query.trim() === '') {
       return Notify.warning('Enter a query', { position: "center-top"});
     }
 
-    this.props.onSubmit(query);
-    this.setState({ query: ''});
+    onSubmit(query);
+    setQuery('');
     // console.log(this.state.query);
   };
 
-  render() {
-    const { query } = this.state;
-    const { handleSubmit, handleChange} = this;
+  return (
+    <Header>
+      <SearchForm onSubmit={handleSubmit}>
+        <SearchFormBtm type="submit">
+          <SearchFormBtmLabel>Search</SearchFormBtmLabel>
+        </SearchFormBtm>
 
-    return (
-        <Header>
-          <SearchForm onSubmit={handleSubmit}>
-            <SearchFormBtm type="submit">
-              <SearchFormBtmLabel>Search</SearchFormBtmLabel>
-            </SearchFormBtm>
-
-            <SearchFormInput
-              type="text"
-              autoComplete="off"
-              autoFocus
-              placeholder="Search images and photos"
-              name="query"
-              onChange={handleChange}
-              value={query}
-            />
-          </SearchForm>
-        </Header>
-    )
-  }
+        <SearchFormInput
+          type="text"
+          autoComplete="off"
+          autoFocus
+          placeholder="Search images and photos"
+          name="query"
+          onChange={handleChange}
+          value={query}
+        />
+      </SearchForm>
+    </Header>
+  )
 }
+
+
+
+
+
+
+
+
+
+
+// export class OldSearchbar extends Component {
+
+//   // state = {
+//   //   query: '',
+//   // };
+
+//   // handleChange = (e) => {
+//   //   this.setState({ query: e.currentTarget.value.toLowerCase()});
+//   //   // console.log(e.target.value);
+//   // }
+
+//   handleSubmit = (e) => { 
+//     const { query } = this.state;
+//     e.preventDefault();
+
+//     if (query.trim() === '') {
+//       return Notify.warning('Enter a query', { position: "center-top"});
+//     }
+
+//     this.props.onSubmit(query);
+//     this.setState({ query: ''});
+//     // console.log(this.state.query);
+//   };
+
+//   render() {
+//     const { query } = this.state;
+//     const { handleSubmit, handleChange} = this;
+
+//     return (
+//         <Header>
+//           <SearchForm onSubmit={handleSubmit}>
+//             <SearchFormBtm type="submit">
+//               <SearchFormBtmLabel>Search</SearchFormBtmLabel>
+//             </SearchFormBtm>
+
+//             <SearchFormInput
+//               type="text"
+//               autoComplete="off"
+//               autoFocus
+//               placeholder="Search images and photos"
+//               name="query"
+//               onChange={handleChange}
+//               value={query}
+//             />
+//           </SearchForm>
+//         </Header>
+//     )
+//   }
+// }
 
 Searchbar.propTypes = {
   onSubmit: PropTypes.func.isRequired
